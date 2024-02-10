@@ -7,9 +7,8 @@ from tkinter import messagebox
 
 barcos = [5, 4, 3, 2, 2, 1, 1]
 pb = 7
-player = mapas_barcos.Mapa('tu')
-bot = mapas_barcos.MapaBot()
-bot.colocar_flota_aleatoria()
+player = 0
+bot = 0
 d_i = []
 d_l = []
 u_d = []
@@ -20,6 +19,7 @@ e = False
 ori = None
 posibles = []
 p_ud = None
+play = False
 
 # main window of the game
 
@@ -28,38 +28,87 @@ window.geometry("1165x565+10+10")
 window.title("Hundir La Flota")
 
 def start():
+    global bot, player, play
     bot = mapas_barcos.MapaBot()
     bot.colocar_flota_aleatoria()
-    return bot
+    player = mapas_barcos.Mapa('tu')
+    play = True
 
 def reset():
-    pass
+    global bot, player, barcos, pb, d_i, u_d, d_l, posibles_barcos, posibles_barco, b, e, ori, posibles, p_ud
+    # REINICIO DEL CANVAS
+    canvas.delete('all')
+    canvas.create_line(2.5,5,1105,2.5,fill = "black",
+                       width = 5)
+
+    canvas.create_line(5,5,5,510,fill = "black",
+                           width = 5)
+
+    canvas.create_line(1058,5,1058,510,fill = "black",
+                           width = 5)
+
+    canvas.create_line(5,508,1105,508,fill = "black",
+                           width = 5)
+
+    canvas.create_line(530,0,530,510,fill = "black",
+                           width = 50)
+
+    for i in range(5,1150,50):
+        canvas.create_line(i,5,i,610,fill = "black",
+                           width = 2)
+
+    for x in range(5,600,50):
+        canvas.create_line(5,x,1160,x,fill = "black",
+                           width = 2)
+    # REINICIO DE TODAS LAS VARIABLES
+    barcos = [5, 4, 3, 2, 2, 1, 1]
+    pb = 7
+    player = 0
+    bot = 0
+    d_i = []
+    d_l = []
+    u_d = []
+    posibles_barcos = []
+    posibles_barco = 0
+    b = False
+    e = False
+    ori = None
+    posibles = []
+    p_ud = None
+    start()
 
 def end():
-    pass
-
-def variables(mapa):
-    pass
+    if messagebox.askokcancel("Cerrar ventana", "¿Seguro que quieres cerrar la ventana?"):
+        window.destroy()
     
 
 def game(event):
     global player, x, y, barcos, canvas, bot, pb
-    x = event.x // 50
-    y = event.y // 50
-    if pb > 0 and x < 10:
-        window.bind("<Right>", put_barco)
-        window.bind("<Left>", put_barco)
-        window.bind("<Up>", put_barco)
-        window.bind("<Down>", put_barco)
-        pb -= 1
-    elif pb == 0:
-        if x >= 11 and x < 21:
-            int_disparo()
-            bot_disparo()
-        if len(player.barcos) < 1:
-            messagebox.showwarning("Advertencia", "Perdiste!")
-        elif len(bot.barcos) < 1:
-            messagebox.showwarning("Advertencia", "Ganaste!")
+    if play:
+        x = event.x // 50
+        y = event.y // 50
+        if pb > 0 and x < 10:
+            window.bind("<Right>", put_barco)
+            window.bind("<Left>", put_barco)
+            window.bind("<Up>", put_barco)
+            window.bind("<Down>", put_barco)
+            pb -= 1
+        elif pb == 0:
+            if x >= 11 and x < 21:
+                int_disparo()
+                bot_disparo()
+            if len(player.barcos) < 1:
+                messagebox.showwarning("Advertencia", "Perdiste!")
+                if not messagebox.askokcancel("Cerrar ventana", "¿Quieres volver a jugar?"):
+                    window.destroy()
+                else:
+                    reset()
+            elif len(bot.barcos) < 1:
+                messagebox.showwarning("Advertencia", "Ganaste!")
+                if not messagebox.askokcancel("Cerrar ventana", "¿Quieres volver a jugar?"):
+                    window.destroy()
+                else:
+                    reset()
 
 
 
