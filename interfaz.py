@@ -176,7 +176,6 @@ def bot_disparo_logica(b, e, ori):
         else:
             y_b = u_d[-1][0]
             x_b = u_d[-1][1]
-            print('\n', y_b, x_b, '\n')
             if b  and e == 1:
                 if ori == 'd':
                     y_b += 1
@@ -198,15 +197,9 @@ def bot_disparo_logica(b, e, ori):
             y_b = p_ud[0] +1
             ori = 'd'
 
-        
-        print('\n', y_b, x_b)
-        print(bot.disparos)
-        print(u_d)
-        print(posibles)
-        print(p_ud)
         if [y_b, x_b] not in bot.disparos:
             break
-        elif  len(u_d) <= 2:
+        elif  len(u_d) >= 2:
             if ori == 'r':
                 x_b = p_ud[1] -1
                 ori = 'l'
@@ -214,10 +207,10 @@ def bot_disparo_logica(b, e, ori):
                 x_b = p_ud[1] +1
                 ori = 'r'
             elif ori == 'u':
-                x_b = p_ud[0] -1
+                y_b = p_ud[0] +1
                 ori = 'd'
             elif  ori == 'd':
-                x_b = p_ud[0] +1
+                y_b = p_ud[0] -1
                 ori = 'u'
             break
     return y_b, x_b, ori
