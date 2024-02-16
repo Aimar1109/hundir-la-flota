@@ -106,7 +106,7 @@ class Mapa():
             if pos[0] < 0 or pos[1] < 0 or pos[0] > 9 or pos[1] > 9:
                 return False
             for barco in self.barcos:
-                if pos in barco.posiciones:
+                if pos in barco.posiciones or pos in barco.alrededor:
                     return False
         return True
     
@@ -162,6 +162,7 @@ class MapaBot(Mapa):
                     columna = random.randint(0, 9)
                     nuevo_barco = Barco(barco, tamaño, [fila, columna], orientacion, direccion)
                     nuevo_barco.crear_barco()
+                    nuevo_barco.guadar_alrededor()
                     if self.validar_barco(nuevo_barco):
                         break
                 self.barcos.append(nuevo_barco)
@@ -175,6 +176,7 @@ class Barco():
         self.vertical = vertical
         self.direccion = direccion
         self.posiciones = []
+        self.alrededor = []
 
     def crear_barco(self):
         if self.tamaño > 1:
@@ -192,37 +194,46 @@ class Barco():
         else:
             self.posiciones.append([self.p_posicion[0], self.p_posicion[1]])
     
+    def guadar_alrededor(self):
+        p = []
+        for pos in self.posiciones:
+            p.append(pos)
+        if self.vertical:
+            if self.direccion == 'ar':
+                p.reverse()
 
-#game = True
-#
-#user_mapa = Mapa(input('Tu nombre de usuario: '))
-#user_mapa.colocar_flota()
-#
-#bot_mapa = MapaBot()
-#bot_mapa.colocar_flota_aleatoria()
-#
-#while game:
-#    user_mapa.display_juego(bot_mapa)
-#    print(f'\nTurno de {user_mapa.name}')
-#    while True:
-#        y_u = int(input('Fila: '))
-#        x_u = int(input('Columna: '))
-#        if [y_u, x_u] not in user_mapa.disparos:
-#            break
-#    user_mapa.disparo(bot_mapa, y_u, x_u)
-#    user_mapa.display_juego(bot_mapa)
-#    print(f'\nTurno de {bot_mapa.name}')
-#    while True:
-#        y_b = random.randint(0,9)
-#        x_b = random.randint(0,9)
-#        if [y_b, x_b] not in bot_mapa.disparos:
-#            break
-#    bot_mapa.disparo(user_mapa, y_b, x_b)
-#    if len(user_mapa.barcos) == 0:
-#        user_mapa.display_juego(bot_mapa)
-#        print("\n\t\t\tHAS PERDIDO!!!")
-#        game = False
-#    elif len(bot_mapa.barcos) == 0:
-#        user_mapa.display_juego(bot_mapa)
-#        print("\n\t\t\tHAS PERDIDO!!!")
-#        game = False
+            if (p[0][0] - 1) > -1:
+                self.alrededor.append([p[0][0] - 1, p[0][1]])
+                p.insert(0, [p[0][0] - 1, p[0][1]])
+            if (p[-1][0] + 1)  <= 9:
+                self.alrededor.append([p[-1][0] + 1, p[0][1]])
+                p.append([p[-1][0] + 1, p[0][1]])
+
+            a = []
+            b = []
+            for pos in p:
+                if pos[1]+1 < 10:
+                    a.append([pos[0], pos[1]+1])
+                if pos[1]-1 > -1:
+                    b.append([pos[0], pos[1]-1])
+            self.alrededor = self.alrededor + a + b
+
+        else:
+            if self.direccion == 'i':
+                p.reverse()
+
+            if p[0][1] + 1 < 10:
+                self.alrededor.append([p[0][0], p[0][1]-1])
+                p.insert(0, [p[0][0], p[0][1]-1])
+            if p[-1][1] - 1 > -1:
+                self.alrededor.append([p[0][0], p[-1][1]+1])
+                p.append([p[0][0], p[-1][1]+1])
+
+            a = []
+            b = []
+            for pos in p:
+                if pos[1]+1 < 10:
+                    a.append([pos[0]+1, pos[1]])
+                if pos[1]-1 >= 0:
+                    b.append([pos[0]-1, pos[1]])
+            self.alrededor = self.alrededor + a + b

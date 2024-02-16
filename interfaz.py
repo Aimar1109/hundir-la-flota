@@ -123,6 +123,7 @@ def put_barco(event):
     elif event.keysym == 'Down':
         barco = mapas_barcos.Barco(get_key_by_value(player.tipos_barco, barcos[0]), barcos[0], [y, x], True, 'ab')
     barco.crear_barco()
+    barco.guadar_alrededor()
     if player.validar_barco(barco):
         player.barcos.append(barco)
         barcos.remove(barcos[0])
