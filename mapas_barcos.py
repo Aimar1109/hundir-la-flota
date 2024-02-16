@@ -175,6 +175,7 @@ class Barco():
         self.vertical = vertical
         self.direccion = direccion
         self.posiciones = []
+        self.alrededor = []
 
     def crear_barco(self):
         if self.tamaño > 1:
@@ -191,38 +192,20 @@ class Barco():
                         self.posiciones.append([self.p_posicion[0], self.p_posicion[1]-i])
         else:
             self.posiciones.append([self.p_posicion[0], self.p_posicion[1]])
-    
-
-#game = True
-#
-#user_mapa = Mapa(input('Tu nombre de usuario: '))
-#user_mapa.colocar_flota()
-#
-#bot_mapa = MapaBot()
-#bot_mapa.colocar_flota_aleatoria()
-#
-#while game:
-#    user_mapa.display_juego(bot_mapa)
-#    print(f'\nTurno de {user_mapa.name}')
-#    while True:
-#        y_u = int(input('Fila: '))
-#        x_u = int(input('Columna: '))
-#        if [y_u, x_u] not in user_mapa.disparos:
-#            break
-#    user_mapa.disparo(bot_mapa, y_u, x_u)
-#    user_mapa.display_juego(bot_mapa)
-#    print(f'\nTurno de {bot_mapa.name}')
-#    while True:
-#        y_b = random.randint(0,9)
-#        x_b = random.randint(0,9)
-#        if [y_b, x_b] not in bot_mapa.disparos:
-#            break
-#    bot_mapa.disparo(user_mapa, y_b, x_b)
-#    if len(user_mapa.barcos) == 0:
-#        user_mapa.display_juego(bot_mapa)
-#        print("\n\t\t\tHAS PERDIDO!!!")
-#        game = False
-#    elif len(bot_mapa.barcos) == 0:
-#        user_mapa.display_juego(bot_mapa)
-#        print("\n\t\t\tHAS PERDIDO!!!")
-#        game = False
+    def guadar_alrededor(self):
+        if self.vertical:
+            posiciones = self.posiciones
+            if posiciones[0][0] + 1 < 10:
+                posiciones.append([posiciones[0][0] + 1, posiciones[0][1]])
+                self.alrededor.append([posiciones[0][0] + 1, posiciones[0][1]])
+            if posiciones[0][0] - 1 > -1:
+                posiciones.insert(0, [posiciones[0][0] - 1, posiciones[0][1]])
+                self.alrededor.append([posiciones[0][0] - 1, posiciones[0][1]])
+            a = []
+            b = []
+            for pos in posiciones:
+                if pos[1]+1 < 10:
+                    a.append([pos[0], pos[1]+1])
+                if pos[1]-1 >= 0:
+                    b.append([pos[0], pos[1]-1])
+            self.alrededor = self.alrededor + a + b
