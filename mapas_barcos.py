@@ -106,7 +106,7 @@ class Mapa():
             if pos[0] < 0 or pos[1] < 0 or pos[0] > 9 or pos[1] > 9:
                 return False
             for barco in self.barcos:
-                if pos in barco.posiciones:
+                if pos in barco.posiciones or pos in barco.alrededor:
                     return False
         return True
     
@@ -194,16 +194,16 @@ class Barco():
             self.posiciones.append([self.p_posicion[0], self.p_posicion[1]])
     def guadar_alrededor(self):
         if self.vertical:
-            posiciones = self.posiciones
-            if posiciones[0][0] + 1 < 10:
-                posiciones.append([posiciones[0][0] + 1, posiciones[0][1]])
-                self.alrededor.append([posiciones[0][0] + 1, posiciones[0][1]])
-            if posiciones[0][0] - 1 > -1:
-                posiciones.insert(0, [posiciones[0][0] - 1, posiciones[0][1]])
-                self.alrededor.append([posiciones[0][0] - 1, posiciones[0][1]])
+            p = self.posiciones
+            if p[0][0] + 1 < 10:
+                p.append([p[0][0] + 1, p[0][1]])
+                self.alrededor.append([p[-1][0] + 1, p[0][1]])
+            if p[0][0] - 1 > -1:
+                p.insert(0, [p[0][0] - 1, p[0][1]])
+                self.alrededor.append([p[0][0] - 1, p[0][1]])
             a = []
             b = []
-            for pos in posiciones:
+            for pos in p:
                 if pos[1]+1 < 10:
                     a.append([pos[0], pos[1]+1])
                 if pos[1]-1 >= 0:
