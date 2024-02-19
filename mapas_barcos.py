@@ -136,6 +136,7 @@ class MapaBot(Mapa):
         self.mapa = [[self.mar]*10 for _ in range(10)]
         self.barcos = []
         self.disparos = []
+        self.alrededor = []
 
     def colocar_flota_aleatoria(self):
         tipos_barco = {"Portaaviones": 5,
@@ -162,6 +163,7 @@ class MapaBot(Mapa):
                     columna = random.randint(0, 9)
                     nuevo_barco = Barco(barco, tamaño, [fila, columna], orientacion, direccion)
                     nuevo_barco.crear_barco()
+                    nuevo_barco.guadar_alrededor()
                     if self.validar_barco(nuevo_barco):
                         break
                 self.barcos.append(nuevo_barco)
@@ -192,20 +194,46 @@ class Barco():
                         self.posiciones.append([self.p_posicion[0], self.p_posicion[1]-i])
         else:
             self.posiciones.append([self.p_posicion[0], self.p_posicion[1]])
-    def guadar_alrededor(self):
+def guadar_alrededor(self):
+        p = []
+        for pos in self.posiciones:
+            p.append(pos)
         if self.vertical:
-            p = self.posiciones
-            if p[0][0] + 1 < 10:
-                p.append([p[0][0] + 1, p[0][1]])
-                self.alrededor.append([p[-1][0] + 1, p[0][1]])
-            if p[0][0] - 1 > -1:
-                p.insert(0, [p[0][0] - 1, p[0][1]])
+            if self.direccion == 'ar':
+                p.reverse()
+
+            if (p[0][0] - 1) > -1:
                 self.alrededor.append([p[0][0] - 1, p[0][1]])
+                p.insert(0, [p[0][0] - 1, p[0][1]])
+            if (p[-1][0] + 1)  <= 9:
+                self.alrededor.append([p[-1][0] + 1, p[0][1]])
+                p.append([p[-1][0] + 1, p[0][1]])
+
             a = []
             b = []
             for pos in p:
                 if pos[1]+1 < 10:
                     a.append([pos[0], pos[1]+1])
-                if pos[1]-1 >= 0:
+                if pos[1]-1 > -1:
                     b.append([pos[0], pos[1]-1])
+            self.alrededor = self.alrededor + a + b
+
+        else:
+            if self.direccion == 'i':
+                p.reverse()
+
+            if p[0][1] + 1 < 10:
+                self.alrededor.append([p[0][0], p[0][1]-1])
+                p.insert(0, [p[0][0], p[0][1]-1])
+            if p[-1][1] - 1 > -1:
+                self.alrededor.append([p[0][0], p[-1][1]+1])
+                p.append([p[0][0], p[-1][1]+1])
+
+            a = []
+            b = []
+            for pos in p:
+                if pos[1]+1 < 10:
+                    a.append([pos[0]+1, pos[1]])
+                if pos[1]-1 >= 0:
+                    b.append([pos[0]-1, pos[1]])
             self.alrededor = self.alrededor + a + b
