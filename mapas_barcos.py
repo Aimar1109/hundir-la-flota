@@ -119,13 +119,13 @@ class Mapa():
                 contrario.actualizar_mapa(y, x, '-')
                 barco.posiciones.remove([y, x])
                 if len(barco.posiciones) != 0:
-                    return True, 1
+                    return True, 1, None
                 else:
                     contrario.barcos.remove(barco)
-                    return True, 2
+                    return True, 2, barco
         if not col:
             contrario.actualizar_mapa(y, x, 'X')
-            return False, 0
+            return False, 0, None
             
 
 
