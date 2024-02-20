@@ -194,7 +194,7 @@ class Barco():
                         self.posiciones.append([self.p_posicion[0], self.p_posicion[1]-i])
         else:
             self.posiciones.append([self.p_posicion[0], self.p_posicion[1]])
-def guadar_alrededor(self):
+    def guadar_alrededor(self):
         p = []
         for pos in self.posiciones:
             p.append(pos)
