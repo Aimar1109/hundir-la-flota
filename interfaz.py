@@ -21,6 +21,7 @@ posibles = []
 p_ud = None
 play = False
 descartes_bot = []
+add = 0
 
 # main window of the game
 
@@ -37,7 +38,7 @@ def start():
         play = True
 
 def reset():
-    global bot, player, barcos, pb, d_i, u_d, d_l, posibles_barcos, posibles_barco, b, e, ori, posibles, p_ud, descartes_bot
+    global bot, player, barcos, pb, d_i, u_d, d_l, posibles_barcos, posibles_barco, b, e, ori, posibles, p_ud, descartes_bot, add
     # REINICIO DEL CANVAS
     canvas.delete('all')
     canvas.create_line(2.5,5,1105,2.5,fill = "black",
@@ -79,6 +80,7 @@ def reset():
     posibles = []
     p_ud = None
     descartes_bot = []
+    add = 0
     start()
 
 def end():
@@ -87,7 +89,7 @@ def end():
     
 
 def game(event):
-    global player, x, y, barcos, canvas, bot, pb
+    global player, x, y, barcos, canvas, bot, pb, d_i, add
     if play:
         x = event.x // 50
         y = event.y // 50
@@ -100,7 +102,9 @@ def game(event):
         elif pb == 0:
             if x >= 11 and x < 21:
                 int_disparo()
-                bot_disparo()
+                if add == 1 and [x, y] not in player.disparos:
+                    bot_disparo()
+                    add = 0
             if len(player.barcos) < 1:
                 messagebox.showwarning("Advertencia", "Perdiste!")
                 for barco in bot.barcos:
@@ -158,8 +162,11 @@ def get_key_by_value(dictionary, value):
     return None
 
 def int_disparo():
-    global d_i, a
-    if [x, y] not in d_i:
+    global add
+    if [y, x] not in player.disparos:
+        if add == 0:
+            player.disparos.append([y, x])
+            add = 1
         d, e, extra = player.disparo(bot, x-11, y)
         if d:
             canvas.create_rectangle(5+(50*x), 
@@ -176,7 +183,6 @@ def int_disparo():
                                text='X',
                                fill="black",
                                font='tkDefaeultFont 42')
-        d_i.append([x, y])
 
 
 def bot_disparo():
