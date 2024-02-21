@@ -20,7 +20,7 @@ ori = None
 posibles = []
 p_ud = None
 play = False
-descartes = []
+descartes_bot = []
 
 # main window of the game
 
@@ -159,7 +159,7 @@ def get_key_by_value(dictionary, value):
 def int_disparo():
     global d_i, a
     if [x, y] not in d_i:
-        d, e, a = player.disparo(bot, x-11, y)
+        d, e, extra = player.disparo(bot, x-11, y)
         if d:
             canvas.create_rectangle(5+(50*x), 
                                     5+(50*y), 
@@ -179,9 +179,10 @@ def int_disparo():
 
 
 def bot_disparo():
-    global b, e, ori, u_d, posibles, descartes
+    global b, e, ori, u_d, posibles, descartes_bot
+    a = []
     y_b, x_b, ori = bot_disparo_logica(b, e, ori)
-    b, e, barco_num = bot.disparo(player, y_b, x_b)
+    b, e, barco = bot.disparo(player, y_b, x_b)
     if b:
         canvas.create_rectangle(5+(50*x_b), 
                                 5+(50*y_b), 
@@ -192,8 +193,12 @@ def bot_disparo():
                 messagebox.showwarning("Advertencia", "Hundido!")
                 u_d = []
                 posibles = []
-                print(player.barcos[barco_num].alrededor)
-                descartes += player.barcos[barco_num].alrededor
+                for pos in barco.alrededor:
+                    if 9 < pos[0] < 0 or 9 < pos[1] < 0:
+                        continue
+                    elif pos not in descartes_bot and pos not in bot.disparos:
+                        a.append(pos)
+                descartes_bot += a
         elif e == 1:
             messagebox.showwarning("Advertencia", "Tocado!")
             u_d.append([y_b, x_b])
@@ -209,7 +214,7 @@ def bot_disparo():
             pass
 
 def bot_disparo_logica(b, e, ori):
-    global u_d, posibles_barcos, posibles_barco, posibles, bot, d_l, p_ud, descartes
+    global u_d, posibles_barcos, posibles_barco, posibles, bot, d_l, p_ud, descartes_bot
     a = 0
     while True:
         if len(u_d) == 0:
@@ -260,7 +265,7 @@ def bot_disparo_logica(b, e, ori):
             y_b = p_ud[0] +1
             ori = 'd'
 
-        if [y_b, x_b] not in bot.disparos and [y_b,x_b] not in descartes:
+        if [y_b, x_b] not in bot.disparos and [y_b,x_b] not in descartes_bot:
             break
         elif  len(u_d) >= 2:
             if ori == 'r':
