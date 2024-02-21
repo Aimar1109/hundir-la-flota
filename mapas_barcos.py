@@ -112,20 +112,22 @@ class Mapa():
     
     def disparo(self, contrario, y, x):
         col = False
+        a = -1
         self.disparos.append([y, x])
         for barco in contrario.barcos:
+            a += 1
             if [y, x] in barco.posiciones:
                 col = True
                 contrario.actualizar_mapa(y, x, '-')
                 barco.posiciones.remove([y, x])
                 if len(barco.posiciones) != 0:
-                    return True, 1
+                    return True, 1, a
                 else:
                     contrario.barcos.remove(barco)
-                    return True, 2
+                    return True, 2, a
         if not col:
             contrario.actualizar_mapa(y, x, 'X')
-            return False, 0
+            return False, 0, a
             
 
 
@@ -237,3 +239,5 @@ class Barco():
                 if pos[1]-1 >= 0:
                     b.append([pos[0]-1, pos[1]])
             self.alrededor = self.alrededor + a + b
+            if a:
+                return self.alrededor

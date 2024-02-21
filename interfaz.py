@@ -20,6 +20,7 @@ ori = None
 posibles = []
 p_ud = None
 play = False
+descartes = []
 
 # main window of the game
 
@@ -29,13 +30,14 @@ window.title("Hundir La Flota")
 
 def start():
     global bot, player, play
-    bot = mapas_barcos.MapaBot()
-    bot.colocar_flota_aleatoria()
-    player = mapas_barcos.Mapa('tu')
-    play = True
+    if play == False:
+        bot = mapas_barcos.MapaBot()
+        bot.colocar_flota_aleatoria()
+        player = mapas_barcos.Mapa('tu')
+        play = True
 
 def reset():
-    global bot, player, barcos, pb, d_i, u_d, d_l, posibles_barcos, posibles_barco, b, e, ori, posibles, p_ud
+    global bot, player, barcos, pb, d_i, u_d, d_l, posibles_barcos, posibles_barco, b, e, ori, posibles, p_ud, descartes
     # REINICIO DEL CANVAS
     canvas.delete('all')
     canvas.create_line(2.5,5,1105,2.5,fill = "black",
@@ -75,6 +77,7 @@ def reset():
     ori = None
     posibles = []
     p_ud = None
+    descartes = []
     start()
 
 def end():
@@ -99,6 +102,13 @@ def game(event):
                 bot_disparo()
             if len(player.barcos) < 1:
                 messagebox.showwarning("Advertencia", "Perdiste!")
+                for barco in bot.barcos:
+                    for i in barco.posiciones:
+                        canvas.create_rectangle(5+(50*(i[1]+10)), 
+                                                5+(50*(i[0]+10)), 
+                                                5+(50*(i[1]+11)),
+                                                5+(50*(i[0]+11)), 
+                                                fill='grey')
                 if not messagebox.askokcancel("Cerrar ventana", "¿Quieres volver a jugar?"):
                     window.destroy()
                 else:
@@ -147,9 +157,9 @@ def get_key_by_value(dictionary, value):
     return None
 
 def int_disparo():
-    global d_i
+    global d_i, a
     if [x, y] not in d_i:
-        d, e = player.disparo(bot, x-11, y)
+        d, e, a = player.disparo(bot, x-11, y)
         if d:
             canvas.create_rectangle(5+(50*x), 
                                     5+(50*y), 
@@ -169,9 +179,9 @@ def int_disparo():
 
 
 def bot_disparo():
-    global b, e, ori, u_d, posibles
+    global b, e, ori, u_d, posibles, descartes
     y_b, x_b, ori = bot_disparo_logica(b, e, ori)
-    b, e = bot.disparo(player, y_b, x_b)
+    b, e, barco_num = bot.disparo(player, y_b, x_b)
     if b:
         canvas.create_rectangle(5+(50*x_b), 
                                 5+(50*y_b), 
@@ -182,6 +192,8 @@ def bot_disparo():
                 messagebox.showwarning("Advertencia", "Hundido!")
                 u_d = []
                 posibles = []
+                print(player.barcos[barco_num].alrededor)
+                descartes += player.barcos[barco_num].alrededor
         elif e == 1:
             messagebox.showwarning("Advertencia", "Tocado!")
             u_d.append([y_b, x_b])
@@ -197,7 +209,7 @@ def bot_disparo():
             pass
 
 def bot_disparo_logica(b, e, ori):
-    global u_d, posibles_barcos, posibles_barco, posibles, bot, d_l, p_ud
+    global u_d, posibles_barcos, posibles_barco, posibles, bot, d_l, p_ud, descartes
     a = 0
     while True:
         if len(u_d) == 0:
@@ -248,7 +260,7 @@ def bot_disparo_logica(b, e, ori):
             y_b = p_ud[0] +1
             ori = 'd'
 
-        if [y_b, x_b] not in bot.disparos:
+        if [y_b, x_b] not in bot.disparos and [y_b,x_b] not in descartes:
             break
         elif  len(u_d) >= 2:
             if ori == 'r':
