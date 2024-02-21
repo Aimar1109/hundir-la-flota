@@ -37,7 +37,7 @@ def start():
         play = True
 
 def reset():
-    global bot, player, barcos, pb, d_i, u_d, d_l, posibles_barcos, posibles_barco, b, e, ori, posibles, p_ud, descartes
+    global bot, player, barcos, pb, d_i, u_d, d_l, posibles_barcos, posibles_barco, b, e, ori, posibles, p_ud, descartes_bot
     # REINICIO DEL CANVAS
     canvas.delete('all')
     canvas.create_line(2.5,5,1105,2.5,fill = "black",
@@ -65,8 +65,9 @@ def reset():
     # REINICIO DE TODAS LAS VARIABLES
     barcos = [5, 4, 3, 2, 2, 1, 1]
     pb = 7
-    player = 0
-    bot = 0
+    player = mapas_barcos.Mapa('tu')
+    bot = mapas_barcos.MapaBot()
+    bot.colocar_flota_aleatoria()
     d_i = []
     d_l = []
     u_d = []
@@ -77,7 +78,7 @@ def reset():
     ori = None
     posibles = []
     p_ud = None
-    descartes = []
+    descartes_bot = []
     start()
 
 def end():
