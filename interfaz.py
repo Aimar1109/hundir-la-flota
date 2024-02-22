@@ -268,6 +268,7 @@ def bot_disparo_logica(b, e, ori):
             ori = 'r'
         elif y_b > 9:
             y_b = p_ud[0] -1
+            ori = 'u'
         elif  y_b < 0:
             y_b = p_ud[0] +1
             ori = 'd'
